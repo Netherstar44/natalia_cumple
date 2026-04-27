@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>¡Feliz Cumpleaños Natalia! 🎂</title>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;600;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--pink:#e91e8c;--gold:#d4a843;--rose:#f8b4d9;--deep:#1a0a2e;--purple:#6b21a8;--soft:#fdf2f8}
+html{scroll-behavior:smooth}
+body{font-family:'Poppins',sans-serif;background:var(--deep);color:#fff;overflow-x:hidden}
+
+/* INTRO SCREEN */
+#intro{position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg,#1a0a2e,#2d1b69,#1a0a2e);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:opacity 1s,visibility 1s}
+#intro.hidden{opacity:0;visibility:hidden;pointer-events:none}
+#intro h1{font-family:'Great Vibes',cursive;font-size:clamp(2.5rem,8vw,5rem);color:var(--gold);text-shadow:0 0 30px rgba(212,168,67,.5);animation:pulseGlow 2s infinite;text-align:center;padding:0 1rem}
+#intro p{font-size:clamp(1rem,3vw,1.4rem);color:var(--rose);margin-top:1rem;animation:fadeUp 2s ease}
+#intro .tap{margin-top:2rem;font-size:.9rem;color:rgba(255,255,255,.6);animation:bounce 2s infinite}
+.intro-emoji{font-size:clamp(3rem,10vw,6rem);animation:floatEmoji 3s ease-in-out infinite}
+
+/* CANVAS CONFETTI */
+#confetti-canvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9998}
+
+/* PARTICLES BG */
+.particles{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden}
+.particle{position:absolute;border-radius:50%;animation:floatParticle linear infinite;opacity:.3}
+
+/* MAIN */
+main{position:relative;z-index:1}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem;background:radial-gradient(ellipse at center,rgba(107,33,168,.3),transparent 70%)}
+.hero h1{font-family:'Great Vibes',cursive;font-size:clamp(3rem,10vw,6rem);background:linear-gradient(135deg,var(--gold),var(--pink),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:shineText 3s ease infinite;background-size:200% auto}
+.hero .date{font-family:'Dancing Script',cursive;font-size:clamp(1.5rem,5vw,2.5rem);color:var(--rose);margin:1rem 0;animation:fadeUp 1.5s ease .5s both}
+.hero .subtitle{font-size:clamp(1rem,3vw,1.3rem);color:rgba(255,255,255,.8);max-width:600px;line-height:1.8;animation:fadeUp 1.5s ease 1s both}
+.hero .hearts{font-size:2rem;margin-top:1.5rem;animation:fadeUp 1.5s ease 1.5s both}
+.scroll-arrow{margin-top:2rem;animation:bounce 2s infinite;font-size:2rem;cursor:pointer}
+
+/* MESSAGE SECTIONS */
+.message-section{padding:4rem 1.5rem;text-align:center;max-width:800px;margin:0 auto}
+.message-section h2{font-family:'Great Vibes',cursive;font-size:clamp(2rem,6vw,3.5rem);color:var(--gold);margin-bottom:1.5rem}
+.message-section p{font-size:clamp(1rem,2.5vw,1.2rem);line-height:2;color:rgba(255,255,255,.85)}
+
+/* GALLERY */
+.gallery-section{padding:3rem 1rem}
+.gallery-section h2{font-family:'Great Vibes',cursive;font-size:clamp(2rem,6vw,3.5rem);color:var(--gold);text-align:center;margin-bottom:3rem}
+.gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;max-width:1200px;margin:0 auto;padding:0 1rem}
+.photo-card{position:relative;border-radius:20px;overflow:hidden;aspect-ratio:3/4;cursor:pointer;transition:transform .5s cubic-bezier(.25,.46,.45,.94),box-shadow .5s;box-shadow:0 10px 40px rgba(0,0,0,.3)}
+.photo-card:hover{transform:translateY(-10px) scale(1.02);box-shadow:0 20px 60px rgba(233,30,140,.3)}
+.photo-card img{width:100%;height:100%;object-fit:cover;transition:transform .8s}
+.photo-card:hover img{transform:scale(1.1)}
+.photo-card .overlay{position:absolute;bottom:0;left:0;right:0;padding:1.5rem;background:linear-gradient(transparent,rgba(0,0,0,.8));transform:translateY(100%);transition:transform .5s}
+.photo-card:hover .overlay{transform:translateY(0)}
+.photo-card .overlay p{font-family:'Dancing Script',cursive;font-size:1.2rem;color:var(--rose)}
+.photo-card::before{content:'';position:absolute;inset:0;border:2px solid transparent;border-radius:20px;transition:border-color .5s;z-index:2;pointer-events:none}
+.photo-card:hover::before{border-color:var(--gold)}
+
+/* LIGHTBOX */
+.lightbox{position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:10000;display:none;align-items:center;justify-content:center;opacity:0;transition:opacity .4s}
+.lightbox.active{display:flex;opacity:1}
+.lightbox img{max-width:90vw;max-height:85vh;object-fit:contain;border-radius:15px;box-shadow:0 0 60px rgba(233,30,140,.3)}
+.lightbox .close{position:absolute;top:1.5rem;right:1.5rem;font-size:2.5rem;color:#fff;cursor:pointer;z-index:10001;width:50px;height:50px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:rgba(255,255,255,.1);transition:background .3s}
+.lightbox .close:hover{background:rgba(255,255,255,.2)}
+.lightbox .nav{position:absolute;top:50%;transform:translateY(-50%);font-size:3rem;color:#fff;cursor:pointer;padding:1rem;background:rgba(255,255,255,.1);border-radius:50%;width:60px;height:60px;display:flex;align-items:center;justify-content:center;transition:background .3s}
+.lightbox .nav:hover{background:rgba(255,255,255,.2)}
+.lightbox .prev{left:1rem}
+.lightbox .next{right:1rem}
+
+/* FINAL MESSAGE */
+.final{min-height:80vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:4rem 1.5rem;background:radial-gradient(ellipse at center,rgba(233,30,140,.1),transparent 70%)}
+.final h2{font-family:'Great Vibes',cursive;font-size:clamp(2.5rem,8vw,4.5rem);color:var(--gold);margin-bottom:2rem}
+.final p{font-size:clamp(1.1rem,3vw,1.4rem);line-height:2;color:rgba(255,255,255,.9);max-width:700px}
+.final .big-heart{font-size:clamp(4rem,12vw,8rem);margin-top:2rem;animation:heartbeat 1.5s infinite}
+.signature{font-family:'Great Vibes',cursive;font-size:clamp(1.5rem,4vw,2rem);color:var(--pink);margin-top:2rem}
+
+/* FLOATING ELEMENTS */
+.floating{position:fixed;pointer-events:none;z-index:5;animation:floatAway linear forwards}
+
+/* SCROLL ANIMATIONS */
+.reveal{opacity:0;transform:translateY(40px);transition:opacity .8s,transform .8s}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* DIVIDER */
+.divider{text-align:center;padding:2rem 0;font-size:1.5rem;color:var(--rose);opacity:.5}
+
+/* KEYFRAMES */
+@keyframes pulseGlow{0%,100%{text-shadow:0 0 20px rgba(212,168,67,.4)}50%{text-shadow:0 0 50px rgba(212,168,67,.8),0 0 80px rgba(233,30,140,.3)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-15px)}}
+@keyframes shineText{0%{background-position:0% center}50%{background-position:200% center}100%{background-position:0% center}}
+@keyframes heartbeat{0%,100%{transform:scale(1)}15%{transform:scale(1.15)}30%{transform:scale(1)}45%{transform:scale(1.1)}}
+@keyframes floatEmoji{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-20px) rotate(5deg)}}
+@keyframes floatParticle{0%{transform:translateY(100vh) rotate(0deg);opacity:0}10%{opacity:.4}90%{opacity:.4}100%{transform:translateY(-10vh) rotate(720deg);opacity:0}}
+@keyframes floatAway{0%{opacity:1;transform:translateY(0) rotate(0deg)}100%{opacity:0;transform:translateY(-100vh) rotate(360deg)}}
+@keyframes sparkle{0%,100%{opacity:.3;transform:scale(.8)}50%{opacity:1;transform:scale(1.2)}}
+@keyframes flicker{0%,100%{transform:scaleY(1) scaleX(1) rotate(-1deg);opacity:1}25%{transform:scaleY(1.1) scaleX(.9) rotate(1deg);opacity:.9}50%{transform:scaleY(.95) scaleX(1.05) rotate(-2deg);opacity:1}75%{transform:scaleY(1.05) scaleX(.95) rotate(1deg);opacity:.95}}
+@keyframes candleOut{0%{transform:scaleY(1);opacity:1}100%{transform:scaleY(0);opacity:0}}
+@keyframes smokeUp{0%{opacity:.7;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-40px) scale(2)}}
+@keyframes revealText{0%{opacity:0;transform:scale(.5) rotate(-10deg)}50%{transform:scale(1.1) rotate(2deg)}100%{opacity:1;transform:scale(1) rotate(0)}}
+@keyframes cakeFloat{0%,100%{transform:perspective(800px) rotateY(-5deg) rotateX(5deg) translateY(0)}50%{transform:perspective(800px) rotateY(5deg) rotateX(3deg) translateY(-10px)}}
+@keyframes glowPulse{0%,100%{filter:drop-shadow(0 0 10px rgba(255,200,50,.4))}50%{filter:drop-shadow(0 0 25px rgba(255,200,50,.8))}}
+@keyframes btnPulse{0%,100%{box-shadow:0 0 0 0 rgba(233,30,140,.5)}70%{box-shadow:0 0 0 15px rgba(233,30,140,0)}}
+
+/* 3D CAKE */
+.cake-section{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4rem 1.5rem;text-align:center;background:radial-gradient(ellipse at center bottom,rgba(107,33,168,.25),transparent 70%)}
+.cake-section h2{font-family:'Great Vibes',cursive;font-size:clamp(2rem,6vw,3.5rem);color:var(--gold);margin-bottom:2rem}
+.cake-container{position:relative;width:clamp(220px,50vw,340px);height:clamp(280px,55vw,400px);margin:0 auto;animation:cakeFloat 6s ease-in-out infinite;filter:drop-shadow(0 20px 40px rgba(0,0,0,.5))}
+.cake-container.blown .candle-flame{animation:candleOut .6s forwards}
+.cake-container.blown .candle-glow{opacity:0}
+.cake-container.blown .smoke{animation:smokeUp 1.5s ease forwards}
+
+/* CAKE LAYERS */
+.cake-base{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:100%;height:35%;background:linear-gradient(135deg,#e8a0bf,#d4789b);border-radius:20px 20px 30px 30px;box-shadow:0 8px 0 #c06a88,0 16px 0 #a85878,inset 0 -10px 20px rgba(0,0,0,.15)}
+.cake-base::before{content:'';position:absolute;top:8px;left:10%;right:10%;height:3px;background:repeating-linear-gradient(90deg,transparent,transparent 8px,rgba(255,255,255,.3) 8px,rgba(255,255,255,.3) 16px);border-radius:2px}
+.cake-base::after{content:'';position:absolute;bottom:15px;left:15%;right:15%;height:3px;background:repeating-linear-gradient(90deg,transparent,transparent 6px,rgba(255,255,255,.25) 6px,rgba(255,255,255,.25) 12px);border-radius:2px}
+.cake-mid{position:absolute;bottom:33%;left:50%;transform:translateX(-50%);width:80%;height:28%;background:linear-gradient(135deg,#f4c6d7,#e8a0bf);border-radius:16px 16px 8px 8px;box-shadow:0 6px 0 #d4789b,inset 0 -8px 15px rgba(0,0,0,.1)}
+.cake-mid::before{content:'';position:absolute;top:50%;left:8%;right:8%;height:3px;background:repeating-linear-gradient(90deg,transparent,transparent 6px,rgba(255,255,255,.35) 6px,rgba(255,255,255,.35) 12px)}
+.cake-top{position:absolute;bottom:58%;left:50%;transform:translateX(-50%);width:60%;height:22%;background:linear-gradient(135deg,#fce4ec,#f8bbd0);border-radius:14px 14px 6px 6px;box-shadow:0 4px 0 #e8a0bf,inset 0 -6px 12px rgba(0,0,0,.08)}
+.cake-top::before{content:'';position:absolute;top:-8px;left:-5%;right:-5%;height:16px;background:linear-gradient(180deg,#fff5f8,#fce4ec);border-radius:50%;}
+
+/* FROSTING DRIPS */
+.drip{position:absolute;background:#fce4ec;border-radius:0 0 50% 50%;z-index:2}
+.cake-mid .drip{top:-2px;height:20px;width:12px}
+.cake-mid .drip:nth-child(1){left:10%}
+.cake-mid .drip:nth-child(2){left:30%;height:28px}
+.cake-mid .drip:nth-child(3){left:55%;height:15px}
+.cake-mid .drip:nth-child(4){left:75%;height:24px}
+.cake-base .drip{top:-2px;height:25px;width:14px;background:#f4c6d7}
+
+/* CANDLES */
+.candles{position:absolute;bottom:78%;left:50%;transform:translateX(-50%);width:50%;display:flex;justify-content:space-around;z-index:5}
+.candle{position:relative;width:10px;height:clamp(40px,8vw,55px);border-radius:3px 3px 0 0}
+.candle:nth-child(1){background:linear-gradient(180deg,#ff6b9d,#e91e8c)}
+.candle:nth-child(2){background:linear-gradient(180deg,#ffd700,#d4a843)}
+.candle:nth-child(3){background:linear-gradient(180deg,#a78bfa,#6b21a8)}
+.candle:nth-child(4){background:linear-gradient(180deg,#67e8f9,#0891b2)}
+.candle:nth-child(5){background:linear-gradient(180deg,#ff6b9d,#e91e8c)}
+.candle-wick{position:absolute;top:-6px;left:50%;transform:translateX(-50%);width:2px;height:6px;background:#333;border-radius:1px}
+.candle-flame{position:absolute;top:-22px;left:50%;transform:translateX(-50%);width:12px;height:18px;background:radial-gradient(ellipse at bottom,#ffd700,#ff8c00 40%,#ff4500 70%,transparent);border-radius:50% 50% 50% 50% / 60% 60% 40% 40%;animation:flicker .3s infinite alternate;transform-origin:bottom center}
+.candle-glow{position:absolute;top:-35px;left:50%;transform:translateX(-50%);width:40px;height:40px;background:radial-gradient(circle,rgba(255,200,50,.3),transparent 70%);border-radius:50%;pointer-events:none;transition:opacity .6s}
+.smoke{position:absolute;top:-28px;left:50%;transform:translateX(-50%);width:6px;height:6px;background:rgba(200,200,200,.5);border-radius:50%;opacity:0}
+
+/* DECORATIONS */
+.cake-deco{position:absolute;font-size:clamp(.8rem,2vw,1.2rem);z-index:3}
+.cake-deco.d1{bottom:8%;left:8%}
+.cake-deco.d2{bottom:12%;right:8%}
+.cake-deco.d3{bottom:40%;left:5%}
+.cake-deco.d4{bottom:45%;right:5%}
+.cake-deco.d5{bottom:65%;left:18%}
+.cake-deco.d6{bottom:68%;right:18%}
+
+/* PLATE */
+.cake-plate{position:absolute;bottom:-12px;left:50%;transform:translateX(-50%);width:115%;height:20px;background:linear-gradient(180deg,#e8e0d8,#d4ccc4);border-radius:50%;box-shadow:0 4px 15px rgba(0,0,0,.3)}
+
+/* BLOW BUTTON */
+.blow-btn{margin-top:2.5rem;padding:1rem 2.5rem;font-family:'Poppins',sans-serif;font-size:clamp(1rem,3vw,1.3rem);font-weight:600;color:#fff;background:linear-gradient(135deg,var(--pink),var(--purple));border:none;border-radius:50px;cursor:pointer;transition:transform .3s,box-shadow .3s;animation:btnPulse 2s infinite;position:relative;overflow:hidden}
+.blow-btn:hover{transform:scale(1.08);box-shadow:0 10px 30px rgba(233,30,140,.4)}
+.blow-btn:active{transform:scale(.95)}
+.blow-btn.hidden{display:none}
+.blow-btn::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:linear-gradient(transparent,rgba(255,255,255,.1),transparent);transform:rotate(45deg);transition:left .6s}
+.blow-btn:hover::before{left:100%}
+
+/* BLOW RESULT */
+.blow-msg{opacity:0;transform:scale(.5);transition:all 1s cubic-bezier(.34,1.56,.64,1);margin-top:2rem}
+.blow-msg.show{opacity:1;transform:scale(1);animation:revealText 1s ease}
+.blow-msg h3{font-family:'Great Vibes',cursive;font-size:clamp(2.5rem,8vw,5rem);background:linear-gradient(135deg,var(--gold),var(--pink),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-size:200% auto;animation:shineText 3s ease infinite;line-height:1.3}
+.blow-msg p{font-size:clamp(1rem,3vw,1.3rem);color:var(--rose);margin-top:1rem}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+.gallery{grid-template-columns:repeat(2,1fr);gap:1rem}
+.lightbox .nav{width:45px;height:45px;font-size:2rem}
+.lightbox .prev{left:.5rem}
+.lightbox .next{right:.5rem}
+.cake-container{width:clamp(200px,65vw,280px);height:clamp(250px,70vw,350px)}
+}
+@media(max-width:480px){
+.gallery{grid-template-columns:1fr;max-width:350px}
+.cake-container{width:200px;height:260px}
+}
+</style>
+</head>
+<body>
+
+<!-- INTRO SCREEN -->
+<div id="intro" onclick="startExperience()">
+  <div class="intro-emoji">🎂</div>
+  <h1>¡Feliz Cumpleaños!</h1>
+  <p>Un detalle especial para alguien muy especial</p>
+  <div class="tap">✨ Toca para abrir tu regalo ✨</div>
+</div>
+
+<canvas id="confetti-canvas"></canvas>
+
+<!-- PARTICLES -->
+<div class="particles" id="particles"></div>
+
+<main>
+  <!-- HERO -->
+  <section class="hero" id="top">
+    <h1>Natalia Nuñez Escalante</h1>
+    <div class="date">27 de Abril 🎉</div>
+    <p class="subtitle">
+      Hoy el mundo celebra el día en que llegaste a iluminarlo todo con tu sonrisa, tu fuerza y tu inmenso amor. ¡Este es un pequeño detalle para la mujer más maravillosa!
+    </p>
+    <div class="hearts">🌹🌹🌹🌹🌹🌹</div>
+    <div class="scroll-arrow" onclick="document.getElementById('msg1').scrollIntoView({behavior:'smooth'})">⬇️</div>
+  </section>
+
+  <div class="divider">🌸 ─── ✿ ─── 🌸</div>
+
+  <!-- MESSAGE 1 -->
+  <section class="message-section reveal" id="msg1">
+    <h2>Para la Mejor Mamá del Mundo</h2>
+    <p>
+      Cada día agradezco a la vida por haberte puesto como mi guía, mi refugio y mi mayor inspiración. 
+      Eres esa mujer guerrera que con su amor hace que todo florezca a su alrededor, 
+     no solo en tu hogar, si no donde quiera que pases y dejas huella. 
+    </p>
+  </section>
+
+  <div class="divider reveal">💫 ─── ✿ ─── 💫</div>
+
+  <!-- GALLERY -->
+  <section class="gallery-section" id="galeria">
+    <h2 class="reveal">Momentos que Atesoro 📸</h2>
+    <div class="gallery">
+      <div class="photo-card reveal" onclick="openLightbox(0)">
+        <img src="IMG/foto1.jpeg" alt="Natalia oliendo rosas" loading="lazy">
+        <div class="overlay"><p>Tu amor por la naturaleza es mágico</p></div>
+      </div>
+      <div class="photo-card reveal" onclick="openLightbox(1)">
+        <img src="IMG/foto2.jpeg" alt="Natalia en las montañas" loading="lazy">
+        <div class="overlay"><p>Tan grande como las montañas (En perspectiva jajajaja)</p></div>
+      </div>
+      <div class="photo-card reveal" onclick="openLightbox(2)">
+        <img src="IMG/foto3.jpeg" alt="Natalia brazos abiertos" loading="lazy">
+        <div class="overlay"><p> Libre como el viento (Excepto por el tomacorriente)</p></div>
+      </div>
+      <div class="photo-card reveal" onclick="openLightbox(3)">
+        <img src="IMG/foto4.jpeg" alt="Natalia junto al río" loading="lazy">
+        <div class="overlay"><p>Siempre sonriendo, siempre brillando (a pesar de mis desastres)</p></div>
+      </div>
+      <div class="photo-card reveal" onclick="openLightbox(4)">
+        <img src="IMG/foto5.jpeg" alt="Natalia en las montañas" loading="lazy">
+        <div class="overlay"><p> La reina de las montañas (terca como ella sola)</p></div>
+      </div>
+      <div class="photo-card reveal" onclick="openLightbox(5)">
+        <img src="IMG/foto6.jpeg" alt="Natalia en evento" loading="lazy">
+        <div class="overlay"><p>Disfrutando cada momento(sobre todo en el campo)</p></div>
+      </div>
+      <div class="photo-card reveal" onclick="openLightbox(6)">
+        <img src="IMG/foto7.jpeg" alt="Natalia en casa" loading="lazy">
+        <div class="overlay"><p>El corazón del hogar(JAJAAJAJ experimento fotografico, la que posa)</p></div>
+      </div>
+      <div class="photo-card reveal" onclick="openLightbox(7)">
+        <img src="IMG/foto8.jpeg" alt="Natalia retrato" loading="lazy">
+        <div class="overlay"><p>Hermosa por dentro y por fuera</p></div>
+      </div>
+      <div class="photo-card reveal" onclick="openLightbox(8)">
+        <img src="IMG/foto9.jpeg" alt="Natalia en familia" loading="lazy">
+        <div class="overlay"><p>Mamá siempre presente(Excepto para comprarme 30k de pan)</p></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider reveal">🌺 ─── ✿ ─── 🌺</div>
+
+  <!-- MESSAGE 2 -->
+  <section class="message-section reveal">
+    <h2>Gracias por Todo, Mamá</h2>
+    <p>
+      Gracias por tus abrazos que curan todo, por tus palabras que dan fuerza,
+      por tus sacrificios silenciosos y por ese amor infinito que nos das sin pedir nada a cambio. Es dificil tratar conmigo y lo se, a veces ni yo me entiendo.
+      Pero apesar de todo tu siempre estas hay para mi.
+      Eres la prueba de que los ángeles existen y caminan entre nosotros. Aunque a veces tambien el pica el instinto de maldad. 
+    </p>
+  </section>
+
+  <div class="divider reveal">🎀 ─── ✿ ─── 🎀</div>
+
+  <!-- 3D CAKE -->
+  <section class="cake-section reveal" id="cake">
+    <h2>¡Es Hora de Soplar las Velas! 🎂</h2>
+    <div class="cake-container" id="cakeContainer">
+      <!-- Plate -->
+      <div class="cake-plate"></div>
+      <!-- Base layer -->
+      <div class="cake-base">
+        <div class="drip" style="left:12%"></div>
+        <div class="drip" style="left:35%;height:30px"></div>
+        <div class="drip" style="left:60%;height:18px"></div>
+        <div class="drip" style="left:82%;height:26px"></div>
+      </div>
+      <!-- Mid layer -->
+      <div class="cake-mid">
+        <div class="drip"></div>
+        <div class="drip"></div>
+        <div class="drip"></div>
+        <div class="drip"></div>
+      </div>
+      <!-- Top layer -->
+      <div class="cake-top"></div>
+      <!-- Decorations -->
+      <div class="cake-deco d1">🌹</div>
+      <div class="cake-deco d2">🌸</div>
+      <div class="cake-deco d3">💖</div>
+      <div class="cake-deco d4">✨</div>
+      <div class="cake-deco d5">🌺</div>
+      <div class="cake-deco d6">💫</div>
+      <!-- Candles -->
+      <div class="candles">
+        <div class="candle"><div class="candle-wick"></div><div class="candle-flame"></div><div class="candle-glow"></div><div class="smoke"></div></div>
+        <div class="candle"><div class="candle-wick"></div><div class="candle-flame"></div><div class="candle-glow"></div><div class="smoke"></div></div>
+        <div class="candle"><div class="candle-wick"></div><div class="candle-flame"></div><div class="candle-glow"></div><div class="smoke"></div></div>
+        <div class="candle"><div class="candle-wick"></div><div class="candle-flame"></div><div class="candle-glow"></div><div class="smoke"></div></div>
+        <div class="candle"><div class="candle-wick"></div><div class="candle-flame"></div><div class="candle-glow"></div><div class="smoke"></div></div>
+      </div>
+    </div>
+    <button class="blow-btn" id="blowBtn" onclick="blowCandles()">🌬️ ¡Sopla las Velas!</button>
+    <div class="blow-msg" id="blowMsg">
+      <h3>¡Feliz Día Natuchita!</h3>
+      <p>🎉 ¡Que se cumplan todos tus deseos! 🎉</p>
+    </div>
+  </section>
+
+  <div class="divider reveal">🎀 ─── ✿ ─── 🎀</div>
+
+  <!-- FINAL -->
+  <section class="final reveal">
+    <h2>¡Te Amamos, Natalia!</h2>
+    <p>
+      Que este nuevo año de vida te traiga toda la felicidad que mereces,
+      salud para seguir llenando nuestras vidas de alegría, y muchos más momentos 
+      hermosos como los que guardan estas fotos. ¡Que la vida te devuelva en bendiciones
+      todo lo que has sembrado con tanto amor!, pero eso si, sin olvidar que bajo el estres y presión se producen los mejores diamantes.
+    </p>
+    <div class="big-heart">❤️</div>
+    <div class="signature">Con toda mi lamboneria, ¡Feliz Cumpleaños Mamá!(Le quedo debiendo el regalo jajaja) 🎂🎁</div>
+  </section>
+</main>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <div class="close" onclick="closeLightbox()">✕</div>
+  <div class="nav prev" onclick="prevPhoto(event)">❮</div>
+  <img id="lb-img" src="" alt="Foto de Natalia">
+  <div class="nav next" onclick="nextPhoto(event)">❯</div>
+</div>
+
+<script>
+// PHOTOS ARRAY
+const photos = [];
+for(let i = 1; i <= 9; i++) photos.push('IMG/foto'+i+'.jpeg');
+let currentPhoto = 0;
+
+// INTRO
+function startExperience(){
+  document.getElementById('intro').classList.add('hidden');
+  launchConfetti();
+  spawnFloatingEmojis();
+}
+
+// CONFETTI
+function launchConfetti(){
+  const c = document.getElementById('confetti-canvas');
+  const ctx = c.getContext('2d');
+  c.width = window.innerWidth;
+  c.height = window.innerHeight;
+  const pieces = [];
+  const colors = ['#e91e8c','#d4a843','#f8b4d9','#6b21a8','#fff','#ff6b9d','#ffd700'];
+  for(let i = 0; i < 200; i++){
+    pieces.push({
+      x: Math.random()*c.width,
+      y: Math.random()*c.height - c.height,
+      w: Math.random()*10+5,
+      h: Math.random()*6+3,
+      color: colors[Math.floor(Math.random()*colors.length)],
+      speed: Math.random()*3+2,
+      angle: Math.random()*Math.PI*2,
+      spin: (Math.random()-.5)*.2,
+      drift: (Math.random()-.5)*2
+    });
+  }
+  let frames = 0;
+  function animate(){
+    ctx.clearRect(0,0,c.width,c.height);
+    pieces.forEach(p=>{
+      p.y += p.speed;
+      p.x += p.drift;
+      p.angle += p.spin;
+      ctx.save();
+      ctx.translate(p.x,p.y);
+      ctx.rotate(p.angle);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
+      ctx.restore();
+    });
+    frames++;
+    if(frames < 300) requestAnimationFrame(animate);
+    else ctx.clearRect(0,0,c.width,c.height);
+  }
+  animate();
+}
+
+// FLOATING EMOJIS
+function spawnFloatingEmojis(){
+  const emojis = ['🎂','🎉','🎁','💖','🌹','🎈','✨','🥳','🎊','💐'];
+  for(let i = 0; i < 15; i++){
+    setTimeout(()=>{
+      const el = document.createElement('div');
+      el.className = 'floating';
+      el.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+      el.style.cssText = `left:${Math.random()*90}%;bottom:-50px;font-size:${Math.random()*2+1.5}rem;animation-duration:${Math.random()*4+4}s;`;
+      document.body.appendChild(el);
+      setTimeout(()=>el.remove(), 8000);
+    }, i*400);
+  }
+}
+
+// PARTICLES BG
+(function createParticles(){
+  const container = document.getElementById('particles');
+  for(let i = 0; i < 30; i++){
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = Math.random()*4+2;
+    const colors = ['var(--pink)','var(--gold)','var(--rose)','var(--purple)'];
+    p.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*100}%;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${Math.random()*15+10}s;animation-delay:${Math.random()*10}s;`;
+    container.appendChild(p);
+  }
+})();
+
+// SCROLL REVEAL
+const observer = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target);}});
+},{threshold:0.15});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+// LIGHTBOX
+function openLightbox(i){
+  currentPhoto = i;
+  const lb = document.getElementById('lightbox');
+  document.getElementById('lb-img').src = photos[i];
+  lb.classList.add('active');
+  document.body.style.overflow='hidden';
+}
+function closeLightbox(){
+  document.getElementById('lightbox').classList.remove('active');
+  document.body.style.overflow='';
+}
+function nextPhoto(e){e.stopPropagation();currentPhoto=(currentPhoto+1)%photos.length;document.getElementById('lb-img').src=photos[currentPhoto];}
+function prevPhoto(e){e.stopPropagation();currentPhoto=(currentPhoto-1+photos.length)%photos.length;document.getElementById('lb-img').src=photos[currentPhoto];}
+document.getElementById('lightbox').addEventListener('click',function(e){if(e.target===this)closeLightbox();});
+document.addEventListener('keydown',function(e){
+  if(!document.getElementById('lightbox').classList.contains('active'))return;
+  if(e.key==='Escape')closeLightbox();
+  if(e.key==='ArrowRight')nextPhoto(e);
+  if(e.key==='ArrowLeft')prevPhoto(e);
+});
+
+// BLOW CANDLES
+function blowCandles(){
+  const cake = document.getElementById('cakeContainer');
+  const btn = document.getElementById('blowBtn');
+  const msg = document.getElementById('blowMsg');
+  cake.classList.add('blown');
+  btn.classList.add('hidden');
+  setTimeout(()=>{
+    msg.classList.add('show');
+    launchConfetti();
+    spawnFloatingEmojis();
+  }, 800);
+}
+
+// RESIZE CANVAS
+window.addEventListener('resize',()=>{const c=document.getElementById('confetti-canvas');c.width=window.innerWidth;c.height=window.innerHeight;});
+</script>
+</body>
+</html>
